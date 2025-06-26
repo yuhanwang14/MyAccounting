@@ -1,0 +1,51 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# MyAccounting Project Rules
+
+This document contains the rules and guidelines for the MyAccounting project, based on the architecture and functional documentation.
+
+---
+
+### Rule: Architecture and Tech Stack
+
+**Source:** `ARCHITECTURE.md`
+
+- **Frontend:** Flutter for Web and iOS.
+- **Backend:** Initially local-first. Future backend could be Node.js/Express or serverless (Firebase Functions).
+- **Database:** Local database, recommending Hive or Isar.
+- **State Management:** Riverpod.
+- **Styling:** Flutter's built-in widgets with Material Design.
+- **Authentication:** Not needed initially. Firebase Auth or custom JWT for future backend.
+- **Hosting & Deployment:**
+    - **Web:** Netlify, with GitHub Actions for CI/CD.
+    - **iOS:** Manual/semi-automated build and upload to App Store Connect.
+- **Architecture Diagrams:** Refer to `ARCHITECTURE.md` for initial (local-first) and future (with backend) architecture diagrams.
+
+---
+
+### Rule: Project Goal and Core Features
+
+**Source:** `FUNCTION_DOC.md`
+
+- **Project Goal:** A straightforward personal accounting application for tracking and managing personal finances efficiently.
+- **Target Audience:** The developer.
+- **Core Features:**
+    - **Account Books:** Create, rename, and manage multiple account books.
+    - **Transaction Management:**
+        - Fields: Name, Amount, Currency (with conversion), Type (Income/Expense), Date, Label.
+        - Labels can be created on the fly.
+    - **Data Visualization & Summaries:**
+        - Period Summary (Income, Expense, Balance).
+        - Expenditure Trend Chart.
+        - Expenditure Category Ranking (Pie chart and ranked list).
+        - Top 10 individual expense transactions.
+    - **CSV Import:** Import transaction data from CSV files.
+- **Nice-to-Haves:**
+    - Advanced charting.
+    - Budgeting module.
+    - Recurring transactions.
+    - Data export (PDF/Excel).
+    - Advanced transaction filtering.
