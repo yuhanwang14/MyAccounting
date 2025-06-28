@@ -39,7 +39,21 @@ The primary user is the developer, meaning the application can be tailored to sp
 *   **CSV Import:**
     *   Import transaction data from a CSV file to allow for bulk entry from bank statements or other sources.
 
-### 5. Nice-to-Haves
+### 5. User Interface Flow
+
+*   **Home Screen:**
+    *   The home page will be a list of transactions from the main account book.
+    *   The list will be vertically scrollable, separated by month.
+    *   Scrolling up will load transactions from the previous month, and scrolling down will load the next month.
+    *   Each month's view will feature prominent cards displaying the total income and expense for that period.
+
+*   **Navigation:**
+    *   Core features like viewing monthly summaries, switching between account books, and importing CSV files will be accessible via small buttons, keeping the main interface clean and focused on the transaction list.
+
+*   **Adding Transactions:**
+    *   A floating action button will be available on the home screen for quick entry of new transactions.
+
+### 6. Nice-to-Haves
 
 *   **Advanced Charting:** Introduce other chart types like bar charts for monthly expense/income comparisons or trend lines.
 *   **Budgeting Module:** Set monthly or yearly budgets for different labels and track spending against them.
