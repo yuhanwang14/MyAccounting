@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/transaction.dart';
 import '../../data/models/label.dart';
 import '../../services/database_service.dart';
+import 'account_book_provider.dart';
 
 class MonthlyTransactionData {
   final int year;
@@ -66,7 +67,7 @@ class TransactionState {
 
 final transactionProvider =
     StateNotifierProvider<TransactionNotifier, TransactionState>((ref) {
-  return TransactionNotifier();
+  return TransactionNotifier(ref);
 });
 
 final labelsProvider =
@@ -75,10 +76,11 @@ final labelsProvider =
 });
 
 class TransactionNotifier extends StateNotifier<TransactionState> {
-  TransactionNotifier() : super(TransactionState()) {
+  TransactionNotifier(this._ref) : super(TransactionState()) {
     _loadInitialData();
   }
 
+  final Ref _ref;
   final _databaseService = DatabaseService.instance;
 
   Future<void> _loadInitialData() async {
@@ -94,11 +96,25 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
 
   Future<void> _loadMonthData(int year, int month) async {
     try {
+      final currentAccountBookId = _ref.read(currentAccountBookProvider);
+
+      // If no current account book is selected, return empty data
+      if (currentAccountBookId == null) {
+        state = state.copyWith(
+          monthlyData: [],
+          isLoading: false,
+          error: null,
+        );
+        return;
+      }
+
       final allTransactions = _databaseService.transactionsBox.values.toList();
 
-      // Filter transactions for the specific month
+      // Filter transactions for the specific month and current account book
       final monthTransactions = allTransactions.where((transaction) {
-        return transaction.date.year == year && transaction.date.month == month;
+        return transaction.date.year == year &&
+            transaction.date.month == month &&
+            transaction.accountBookId == currentAccountBookId;
       }).toList();
 
       // Sort by date (newest first)
@@ -149,6 +165,14 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
     } catch (e) {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }
+  }
+
+  Future<void> refreshData() async {
+    final currentAccountBookId = _ref.read(currentAccountBookProvider);
+    if (currentAccountBookId == null) return;
+
+    state = state.copyWith(isLoading: true, monthlyData: []);
+    await _loadInitialData();
   }
 
   Future<void> loadPreviousMonth() async {

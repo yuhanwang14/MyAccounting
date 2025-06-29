@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../data/models/transaction.dart';
 import '../../providers/transaction_provider.dart';
+import '../../providers/account_book_provider.dart';
 import '../../widgets/transaction_widgets.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -65,6 +66,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final transactionState = ref.watch(transactionProvider);
 
+    // Listen for account book changes and refresh transaction data
+    ref.listen(currentAccountBookProvider, (previous, next) {
+      if (previous != next && next != null) {
+        ref.read(transactionProvider.notifier).refreshData();
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: _buildAppBar(context),
@@ -79,6 +87,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
+    final currentAccountBookId = ref.watch(currentAccountBookProvider);
+    final accountBooks = ref.watch(accountBooksProvider);
+
+    final currentAccountBook = currentAccountBookId != null
+        ? accountBooks
+            .where((book) => book.id == currentAccountBookId)
+            .firstOrNull
+        : null;
+
     return AppBar(
       backgroundColor: Colors.grey[50],
       elevation: 0,
@@ -89,7 +106,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.menu, color: Colors.black87),
           ),
           const Spacer(),
-          _buildBalanceHeader(),
+          Column(
+            children: [
+              if (currentAccountBook != null) ...[
+                Text(
+                  currentAccountBook.name,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+              ],
+              _buildBalanceHeader(),
+            ],
+          ),
           const Spacer(),
           IconButton(
             onPressed: () => context.go('/analytics'),
